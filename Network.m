@@ -102,6 +102,7 @@ function output = feedForward(input)
     output = W2*a2hat;
 end
 
+% Sigmoid Function
 function result = sigmoidFunction(net)
     result = 1 ./ (1+(exp(-net)));
 end
