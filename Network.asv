@@ -6,59 +6,56 @@ function Network()
     armLength = [0.4;0.4];
     baseOrigin = [0, 0];
     samples = 1000;
+    noOfInputs = 3;
+    noOfHiddenNodes = 3;
+    noOfOutputNodes = 2;
     
-    % Generating 2xsamples data between 0 - pi
+    % Generating 2 x samples data between 0 - pi
     angles = pi * rand(2,samples);
     % Calculating arm end points given angles
     [P1, P2] = RevoluteForwardKinematics2D(armLength, angles, baseOrigin);
     
     X = Data;
     X.values = P2;
-    X.normalize(X);
+    %X = normalize(X);
     
-    noOfInputs = 3;
-    noOfHiddenNodes = 3;
-    noOfOutputNodes = 2;
-    
-    global W1; 
+    global W1;  global W2;
     W1 = rand(noOfHiddenNodes, noOfInputs);
-    global W2;
     W2 = rand(noOfOutputNodes, noOfHiddenNodes + 1);
     
-    meanVal(1) = mean(P2(1,:));
-    stdVal(1) = std(P2(1,:));
-    meanVal(2) = mean(P2(2,:));
-    stdVal(2)= std(P2(2,:));
-
-    
-    idx = randperm(samples);
     for i = 1:1000
         for j = 1:samples
-            train(P2(:,idx(j)), angles(:,idx(j)))
+            train(X.values(:,j), angles(:,j))
         end 
     end
     
-    X = rand(2,samples);
-    
+    out = Data;
+    out.values = rand(2,samples);
+    out.values = X.values;
+    %out = normalize(out);
+    Xrand  = out.values;
     for i = 1:samples
-        o = feedForward(X(:,i));
-        out(1,i) = o(1,1);
-        out(2,i) = o(2,1);
+        o = feedForward(Xrand(:,i));
+        out.values(1,i) = o(1,1);
+        out.values(2,i) = o(2,1);
     end
+    %out = reverseNormalize(out);
+    %X = reverseNormalize(X);
     
-
+    out.values(:,1)
+    X.values(:,1)
     
-    [P3, P4] = RevoluteForwardKinematics2D(armLength, out, baseOrigin);
+    [P3, P4] = RevoluteForwardKinematics2D(armLength, out.values, baseOrigin);
     
     figure
     hold on
     tiledlayout(2,2)
     nexttile
-    plot(P2(1,:), P2(2,:), 'b.');
+    plot(X.values(1,:), X.values(2,:), 'b.');
     nexttile
-    plot(X(1,:), X(2,:), 'b.');
+    plot(angles(1,:), angles(2,:), 'b.');
     nexttile
-    plot(out(1,:), out(2,:), 'r.');
+    plot(out.values(1,:), out.values(2,:), 'r.');
     nexttile
     plot(P4(1,:), P4(2,:), 'r.', 'markersize',4);
     
@@ -84,8 +81,8 @@ function train(input, target)
     errGradientW1 = delta2*input';
     errGradientW2 = delta3*a2hat';
     
-    W1 = W1 - 0.01*errGradientW1;
-    W2 = W2 - 0.01*errGradientW2;
+    W1 = W1 - 0.0001*errGradientW1;
+    W2 = W2 - 0.0001*errGradientW2;
 end
 
 function output = feedForward(input)
@@ -110,10 +107,11 @@ end
 function M = normalize(M)
     M.meanVal(1) = mean(M.values(1,:));
     M.meanVal(2) = mean(M.values(2,:));
-    obj.stdVal(2) = std(obj.values(2,:));
-    obj.stdVal(2) = std(obj.values(2,:));
+    M.stdVal(1) = std(M.values(1,:));
+    M.stdVal(2) = std(M.values(2,:));
+    M = M.normalize;
 end
 
 function M = reverseNormalize(M)
-
+    M = M.reverseNormalize;
 end

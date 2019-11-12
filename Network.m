@@ -6,12 +6,11 @@ function Network()
     armLength = [0.4;0.4];
     baseOrigin = [0, 0];
     samples = 1000;
-    
     noOfInputs = 3;
-    noOfHiddenNodes = 3;
+    noOfHiddenNodes = 5;
     noOfOutputNodes = 2;
     
-    % Generating 2xsamples data between 0 - pi
+    % Generating 2 x samples data between 0 - pi
     angles = pi * rand(2,samples);
     % Calculating arm end points given angles
     [P1, P2] = RevoluteForwardKinematics2D(armLength, angles, baseOrigin);
@@ -20,40 +19,43 @@ function Network()
     X.values = P2;
     X = normalize(X);
     
-
-    
     global W1;  global W2;
     W1 = rand(noOfHiddenNodes, noOfInputs);
     W2 = rand(noOfOutputNodes, noOfHiddenNodes + 1);
     
-    idx = randperm(samples);
     for i = 1:1000
         for j = 1:samples
-            train(X(:,idx(j)), angles(:,idx(j)))
+            train(X.values(:,j), angles(:,j))
         end 
     end
     
-    X = rand(2,samples);
-    
+    out = Data;
+    out.values = rand(2,samples);
+    out.values = X.values;
+    out = normalize(out);
+    Xrand  = out.values;
     for i = 1:samples
-        o = feedForward(X(:,i));
-        out(1,i) = o(1,1);
-        out(2,i) = o(2,1);
+        o = feedForward(Xrand(:,i));
+        out.values(1,i) = o(1,1);
+        out.values(2,i) = o(2,1);
     end
+    out = reverseNormalize(out);
+    X = reverseNormalize(X);
     
-    X = reverseNormalize;
+    out.values(:,1)
+    X.values(:,1)
     
-    [P3, P4] = RevoluteForwardKinematics2D(armLength, out, baseOrigin);
+    [P3, P4] = RevoluteForwardKinematics2D(armLength, out.values, baseOrigin);
     
     figure
     hold on
     tiledlayout(2,2)
     nexttile
-    plot(P2(1,:), P2(2,:), 'b.');
+    plot(X.values(1,:), X.values(2,:), 'b.');
     nexttile
-    plot(X(1,:), X(2,:), 'b.');
+    plot(angles(1,:), angles(2,:), 'b.');
     nexttile
-    plot(out(1,:), out(2,:), 'r.');
+    plot(out.values(1,:), out.values(2,:), 'r.');
     nexttile
     plot(P4(1,:), P4(2,:), 'r.', 'markersize',4);
     
@@ -73,7 +75,7 @@ function train(input, target)
     o = W2*a2hat;
 
     delta3 = -(target-o);
-    W2Hat = [W2(1,1), W2(1,2), W2(1,3); W2(2,1), W2(2,2), W2(2,3)];
+    W2Hat = [W2(1,1), W2(1,2), W2(1,3), W2(1,4), W2(1,5); W2(2,1), W2(2,2), W2(2,3), W2(2,4), W2(2,5)];
     delta2 = (W2Hat'*delta3).*a2.*(1-a2);
     
     errGradientW1 = delta2*input';
@@ -105,10 +107,11 @@ end
 function M = normalize(M)
     M.meanVal(1) = mean(M.values(1,:));
     M.meanVal(2) = mean(M.values(2,:));
+    M.stdVal(1) = std(M.values(1,:));
     M.stdVal(2) = std(M.values(2,:));
-    M.stdVal(2) = std(M.values(2,:));
+    M = M.normalize;
 end
 
 function M = reverseNormalize(M)
-    M.ReverseNormalize;
+    M = M.reverseNormalize;
 end

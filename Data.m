@@ -9,19 +9,20 @@ classdef Data
     end
     
     methods        
-        function result = normalize(obj, M)                
-            for k = 1:2
-                P2(k,:) = P2(k,:) - mean(P2(k,:));
-                P2(k,:) = P2(k,:)./std(P2(k,:));
-                %P2(k,:) = (P2(k,:) - min(P2(k,:))) ./ max(P2(k,:) - min(P2(k,:)));
+        function M = normalize(obj)                
+            for k = 1:size(obj.values)
+                obj.values(k,:) = obj.values(k,:) - mean(obj.values(k,:));
+                obj.values(k,:) = obj.values(k,:)./std(obj.values(k,:));
             end
+            M = obj;
         end
         
-        function result = ReverseNormalize(M)
-            for k = 1:2
-                M(k,:) = M.stdVal(k) * M(k,:);
-                M(k,:) = M(k,:) + M.meanVal(k);
+        function M = reverseNormalize(obj)
+            for k = 1:size(obj.values)
+                obj.values(k,:) = obj.stdVal(k) .* obj.values(k,:);
+                obj.values(k,:) = obj.values(k,:) + obj.meanVal(k);
             end
+            M = obj;
         end
     end
 end
