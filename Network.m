@@ -7,34 +7,29 @@ function Network()
     baseOrigin = [0, 0];
     samples = 1000;
     
+    noOfInputs = 3;
+    noOfHiddenNodes = 3;
+    noOfOutputNodes = 2;
+    
     % Generating 2xsamples data between 0 - pi
     angles = pi * rand(2,samples);
     % Calculating arm end points given angles
     [P1, P2] = RevoluteForwardKinematics2D(armLength, angles, baseOrigin);
     
-    noOfInputs = 3;
-    noOfHiddenNodes = 3;
-    noOfOutputNodes = 2;
+    X = Data;
+    X.values = P2;
+    X = normalize(X);
     
-    global W1; 
+
+    
+    global W1;  global W2;
     W1 = rand(noOfHiddenNodes, noOfInputs);
-    global W2;
     W2 = rand(noOfOutputNodes, noOfHiddenNodes + 1);
-    
-    meanVal(1) = mean(P2(1,:));
-    stdVal(1) = std(P2(1,:));
-    meanVal(2) = mean(P2(2,:));
-    stdVal(2)= std(P2(2,:));
-    for k = 1:2
-        P2(k,:) = P2(k,:) - mean(P2(k,:));
-        P2(k,:) = P2(k,:)./std(P2(k,:));
-        %P2(k,:) = (P2(k,:) - min(P2(k,:))) ./ max(P2(k,:) - min(P2(k,:)));
-    end
     
     idx = randperm(samples);
     for i = 1:1000
         for j = 1:samples
-            train(P2(:,idx(j)), angles(:,idx(j)))
+            train(X(:,idx(j)), angles(:,idx(j)))
         end 
     end
     
@@ -46,10 +41,7 @@ function Network()
         out(2,i) = o(2,1);
     end
     
-    for k = 1:2
-        P2(k,:) = stdVal(k) * P2(k,:);
-        P2(k,:) = P2(k,:) + meanVal(k);
-    end
+    X = reverseNormalize;
     
     [P3, P4] = RevoluteForwardKinematics2D(armLength, out, baseOrigin);
     
@@ -111,8 +103,12 @@ function result = sigmoidFunction(net)
 end
 
 function M = normalize(M)
+    M.meanVal(1) = mean(M.values(1,:));
+    M.meanVal(2) = mean(M.values(2,:));
+    M.stdVal(2) = std(M.values(2,:));
+    M.stdVal(2) = std(M.values(2,:));
 end
 
 function M = reverseNormalize(M)
-
+    M.ReverseNormalize;
 end

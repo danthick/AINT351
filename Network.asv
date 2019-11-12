@@ -12,6 +12,10 @@ function Network()
     % Calculating arm end points given angles
     [P1, P2] = RevoluteForwardKinematics2D(armLength, angles, baseOrigin);
     
+    X = Data;
+    X.values = P2;
+    X.normalize(X);
+    
     noOfInputs = 3;
     noOfHiddenNodes = 3;
     noOfOutputNodes = 2;
@@ -22,13 +26,10 @@ function Network()
     W2 = rand(noOfOutputNodes, noOfHiddenNodes + 1);
     
     meanVal(1) = mean(P2(1,:));
-    maxVal(1) = max(P2(1,:));
+    stdVal(1) = std(P2(1,:));
     meanVal(2) = mean(P2(2,:));
-    maxVal(2)= max(P2(2,:));
-    for k = 1:2
-        P2() = mean(P2)/std(P2);
-        %P2(k,:) = (P2(k,:) - min(P2(k,:))) ./ max(P2(k,:) - min(P2(k,:)));
-    end
+    stdVal(2)= std(P2(2,:));
+
     
     idx = randperm(samples);
     for i = 1:1000
@@ -45,9 +46,7 @@ function Network()
         out(2,i) = o(2,1);
     end
     
-    for k = 1:2
-        P2(k,:) = P2(k,:) .* (maxVal(k) - minVal(k)) + minVal(k);
-    end
+
     
     [P3, P4] = RevoluteForwardKinematics2D(armLength, out, baseOrigin);
     
@@ -109,6 +108,10 @@ function result = sigmoidFunction(net)
 end
 
 function M = normalize(M)
+    M.meanVal(1) = mean(M.values(1,:));
+    M.meanVal(2) = mean(M.values(2,:));
+    obj.stdVal(2) = std(obj.values(2,:));
+    obj.stdVal(2) = std(obj.values(2,:));
 end
 
 function M = reverseNormalize(M)
