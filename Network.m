@@ -21,12 +21,14 @@ function Network()
     global W2;
     W2 = rand(noOfOutputNodes, noOfHiddenNodes + 1);
     
-    minVal(1) = min(P2(1,:));
-    maxVal(1) = max(P2(1,:));
-    minVal(2) = min(P2(2,:));
-    maxVal(2)= max(P2(2,:));
+    meanVal(1) = mean(P2(1,:));
+    stdVal(1) = std(P2(1,:));
+    meanVal(2) = mean(P2(2,:));
+    stdVal(2)= std(P2(2,:));
     for k = 1:2
-        P2(k,:) = (P2(k,:) - min(P2(k,:))) ./ max(P2(k,:) - min(P2(k,:)));
+        P2(k,:) = P2(k,:) - mean(P2(k,:));
+        P2(k,:) = P2(k,:)./std(P2(k,:));
+        %P2(k,:) = (P2(k,:) - min(P2(k,:))) ./ max(P2(k,:) - min(P2(k,:)));
     end
     
     idx = randperm(samples);
@@ -45,7 +47,8 @@ function Network()
     end
     
     for k = 1:2
-        P2(k,:) = P2(k,:) .* (maxVal(k) - minVal(k)) + minVal(k);
+        P2(k,:) = stdVal(k) * P2(k,:);
+        P2(k,:) = P2(k,:) + meanVal(k);
     end
     
     [P3, P4] = RevoluteForwardKinematics2D(armLength, out, baseOrigin);
