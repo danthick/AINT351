@@ -7,7 +7,7 @@ function Network()
     baseOrigin = [0, 0];
     samples = 1000;
     noOfInputs = 3;
-    noOfHiddenNodes = 5;
+    noOfHiddenNodes = 7;
     noOfOutputNodes = 2;
     
     % Generating 2 x samples data between 0 - pi
@@ -75,7 +75,7 @@ function train(input, target)
     o = W2*a2hat;
 
     delta3 = -(target-o);
-    W2Hat = [W2(1,1), W2(1,2), W2(1,3), W2(1,4), W2(1,5); W2(2,1), W2(2,2), W2(2,3), W2(2,4), W2(2,5)];
+    W2Hat = [W2(1,1), W2(1,2), W2(1,3), W2(1,4), W2(1,5), W2(1,6), W2(1,7); W2(2,1), W2(2,2), W2(2,3), W2(2,4), W2(2,5), W2(1,6), W2(1,7)];
     delta2 = (W2Hat'*delta3).*a2.*(1-a2);
     
     errGradientW1 = delta2*input';

@@ -68,4 +68,10 @@ resultingState = maze.tm(state, action);
 % test random start
 startingState = maze.RandomStatingState();
 % print out value
+for i = 1:1000
+    starting(i) = maze.RandomStatingState();
+end
+figure
+hold on
+histogram(starting, 100);
 startingState
