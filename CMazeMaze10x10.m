@@ -231,13 +231,13 @@ classdef CMazeMaze10x10
             
             % specify start location in (x,y) coordinates
             % example only
-            startLocation=[5 5];
+            startLocation=[1 1];
             % YOUR CODE GOES HERE
             
             
             % specify end location in (x,y) coordinates
             % example only
-            endLocation=[6 6];
+            endLocation=[10 10];
             % YOUR CODE GOES HERE
             
             
@@ -262,46 +262,37 @@ classdef CMazeMaze10x10
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % reward function that takes a stateID and an action
         function reward = RewardFunction(f, stateID, action)
-            
-            % init to no reqard
-            reward = 0;
-            
-            % YOUR CODE GOES HERE ....
+            if ((stateID == 90 && action == 1) || (stateID == 99 && action == 4))
+                reward = 10;
+            else
+                reward = 0;
+            end
         end
         
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % function  computes a random starting state
+        % function  computes a random starting state between 0 and 100
         function startingState = RandomStatingState(f)
+            % Initial values
             allowed = false;
-            a = 0;
             b = 100;         
             
             while (allowed == false)
-                startingState = ceil((b-a)*rand + a);
+                % Getting a random starting state
+                startingState = ceil(b*rand);
+                % Checking if starting state is in the blockedLocations array
                 for i = 1:size(f.blockedLocations)
-                    sidx=f.stateNumber(f.blockedLocations(i, 1),f.blockedLocations(i, 2));
-                    stateNameID = sprintf('%s', f.stateName{sidx});
-                    if (str2num(stateNameID) == startingState)
+                    % Getting tile number
+                    sidx=f.stateNumber(f.blockedLocations(i, 1),f.blockedLocations(i, 2));    
+                    % Changing bool value depending on if state is allowed or not
+                    if (sidx == startingState)
                         allowed = false;
                         break;
                     else
                         allowed = true;
                     end
                 end
-            end
-            
-%             while (allowed == false)
-%                 startingState = ceil((b-a)*rand + a);
-%                 for i = 1:size(f.blockedLocations)
-%                     if(f.blockedLocations(i, 1) * f.blockedLocations(i, 2) == startingState)
-%                         allowed = false;
-%                         return;
-%                     else
-%                         allowed = true;
-%                     end
-%                 end
-%             end            
+            end          
         end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -332,14 +323,65 @@ classdef CMazeMaze10x10
         % look for boundaries on the grid
         % also look for blocked state
         function f = BuildTransitionMatrix(f)
+            north = 1;
+            east = 2;
+            south = 3;
+            west = 4;
             
-            % allocate
+            % allocate to zero
             f.tm = zeros(f.xStateCnt * f.yStateCnt, f.actionCnt);
             
-            % YOUR CODE GOES HERE ....
-            
-        end
-        
+            for i = 1:f.xStateCnt
+                for j = 1:f.yStateCnt
+                    if (f.stateOpen(i, j))
+                        sidx=f.stateNumber(i,j);
+                        for k = 1:4
+                            if (k == north)
+                                if (i > 0 && i <= 10 && j > 0 && j <= 9)
+                                    if (f.stateOpen(i, j + 1))
+                                        f.tm(sidx, k) = f.stateNumber(i,j + 1);
+                                    else
+                                        f.tm(sidx, k) = f.stateNumber(i,j);
+                                    end
+                                else
+                                    f.tm(sidx, k) = f.stateNumber(i,j);
+                                end
+                            elseif(k == east)
+                                if (i > 1 && i <= 10 && j > 0 && j <= 10)
+                                    if (f.stateOpen(i - 1, j))
+                                        f.tm(sidx, k) = f.stateNumber(i - 1,j);
+                                    else
+                                        f.tm(sidx, k) = f.stateNumber(i,j);
+                                    end
+                                 else
+                                    f.tm(sidx, k) = f.stateNumber(i,j);
+                                end
+                            elseif(k == south)
+                                if (i > 0 && i <= 10 && j > 1 && j <= 9)
+                                    if (f.stateOpen(i, j - 1))
+                                        f.tm(sidx, k) = f.stateNumber(i,j - 1);
+                                    else
+                                        f.tm(sidx, k) = f.stateNumber(i,j);
+                                    end
+                                 else
+                                    f.tm(sidx, k) = f.stateNumber(i,j);
+                                end
+                            elseif(k == west)
+                                if (i > 0 && i <= 9 && j > 0 && j <= 9)
+                                    if (f.stateOpen(i + 1, j))
+                                        f.tm(sidx, k) = f.stateNumber(i + 1, j);
+                                    else
+                                        f.tm(sidx, k) = f.stateNumber(i,j);
+                                    end
+                                 else
+                                    f.tm(sidx, k) = f.stateNumber(i,j);
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end        
     end
 end
 
