@@ -58,7 +58,7 @@ classdef CMazeMaze10x10
             
             % set scaling for display
             f.limitsXY = limitsXY;
-            f,blockedLocations = [];
+            f.blockedLocations = [];
             
             % setup actions
             f.actionCnt = 4;
@@ -242,14 +242,13 @@ classdef CMazeMaze10x10
             
             
             % specify blocked location in (x,y) coordinates
-            % example only
-            blockedLocations = [4 1; 6 2; 8 2; 9 2; 1 3; 3 3; 4 3; 8 3; 9 3; 
+            f.blockedLocations = [4 1; 6 2; 8 2; 9 2; 1 3; 3 3; 4 3; 8 3; 9 3; 
                 1 4; 4 4; 5 4; 1 5; 4 5; 5 5; 6 5; 7 5; 10 5; 1 6; 4 6; 6 6; 7 6; 10 6;
                 4 7; 8 7; 2 8; 3 8; 4 8; 6 8; 8 8; 9 8; 2 9; 3 9; 4 9; 6 9; 9 9; 6 10;];
             % YOUR CODE GOES HERE
             
             % build the maze
-            f = SetMaze(f, xCnt, yCnt, blockedLocations, startLocation, endLocation);
+            f = SetMaze(f, xCnt, yCnt, f.blockedLocations, startLocation, endLocation);
             
             % write the maze state
             maxCnt = xCnt * yCnt;
@@ -274,12 +273,35 @@ classdef CMazeMaze10x10
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % function  computes a random starting state
         function startingState = RandomStatingState(f)
-            startingState = 0;
+            allowed = false;
             a = 0;
-            b = 100;
+            b = 100;         
             
-            startingState = ceil((b-a)*rand + a);
+            while (allowed == false)
+                startingState = ceil((b-a)*rand + a);
+                for i = 1:size(f.blockedLocations)
+                    sidx=f.stateNumber(f.blockedLocations(i, 1),f.blockedLocations(i, 2));
+                    stateNameID = sprintf('%s', f.stateName{sidx});
+                    if (str2num(stateNameID) == startingState)
+                        allowed = false;
+                        break;
+                    else
+                        allowed = true;
+                    end
+                end
+            end
             
+%             while (allowed == false)
+%                 startingState = ceil((b-a)*rand + a);
+%                 for i = 1:size(f.blockedLocations)
+%                     if(f.blockedLocations(i, 1) * f.blockedLocations(i, 2) == startingState)
+%                         allowed = false;
+%                         return;
+%                     else
+%                         allowed = true;
+%                     end
+%                 end
+%             end            
         end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -67,7 +67,6 @@ resultingState = maze.tm(state, action);
 % YOU NEED TO FINISH OFF THIS FUNCTION
 % test random start
 startingState = maze.RandomStatingState();
-% print out value
 for i = 1:1000
     starting(i) = maze.RandomStatingState();
 end
