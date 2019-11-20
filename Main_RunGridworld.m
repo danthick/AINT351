@@ -10,10 +10,8 @@
 % howardlab.com
 % 22/09/2018
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 % run maze experiments
 % you need to expand this script to run the assignment
-
 close all
 clear all
 clc
@@ -24,39 +22,13 @@ limits = [0 1; 0 1;];
 % build the maze
 maze = CMazeMaze10x10(limits);
 
-% draw the maze
-maze.DrawMaze();
-
 % init the q-table
 minVal = 0.01;
 maxVal = 0.1;
 maze = maze.InitQTable(minVal, maxVal);
-
-% test values
-state = 1;
-action = 1;
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% this will be used by Q-learning as follows:
-q = maze.QValues(state, action);   
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% YOU NEED TO FINISH OFF THIS FUNCTION
-% get the reward from the action on the surrent state
-% this will be used by Q-learning as follows:
-reward = maze.RewardFunction(state, action);
     
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% YOU NEED TO FINISH OFF THIS FUNCTION
 % build the transition matrix
 maze = maze.BuildTransitionMatrix();
-
-% get the next state due to that action this will be used by Q-learning as follows:
-resultingState = maze.tm(state, action);
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% YOU NEED TO FINISH OFF THIS FUNCTION
 
 % Plotting histogram
 for i = 1:1000
@@ -69,26 +41,31 @@ histogram(starting, 100);
 episodes = 1000;
 trials = 100;
 
-steps = Trial(maze, episodes);
-[meanVal, stdVal] = Experiment(maze, episodes, trials);
+[maze, steps] = Trial(maze, episodes);
+[meanVal, stdVal, coordinates] = Experiment(maze, episodes, trials);
 
-figure
-hold on
-plot(steps);
+% draw the maze
+maze.DrawMaze();
+line(coordinates(:,1)./10 - 0.05, coordinates(:,2)./10 - 0.05, 'Marker', 'x', 'MarkerEdgeColor', 'm','MarkerFaceColor', [1, 0, 1], 'MarkerSize', 20, 'LineWidth', 5);
 
-figure
-hold on
-errorbar(meanVal, stdVal);
+% figure
+% hold on
+% plot(steps);
 
-function [meanVal, stdVal] = Experiment(maze, episodes, trials)
+% figure
+% hold on
+% errorbar(meanVal, stdVal);
+
+function [meanVal, stdVal, coordinates] = Experiment(maze, episodes, trials)
     for i = 1:trials
-        stepsAcrossTrials(i, :) = Trial(maze, episodes);
+        [maze, stepsAcrossTrials(i, :)] = Trial(maze, episodes);
     end
     meanVal = mean(stepsAcrossTrials);
     stdVal = std(stepsAcrossTrials);
+    coordinates = GetCoordinates(maze);
 end
 
-function steps = Trial(maze, episodes)
+function [maze, steps] = Trial(maze, episodes)
     terminationState = 100;
     
     for i = 1:episodes
@@ -140,5 +117,25 @@ function action = GreedyActionSelection(maze, state)
     end
 end
 
-
-
+function cordinates = GetCoordinates(maze)
+     termination = false;
+     i = 1;
+     states(i) = 1;
+     
+     while (termination == false)
+         
+         % Calculate action from QValues depending what state
+        [temp, action] = max(maze.QValues(states(i), :));
+        % Update the state given the action
+        states(i + 1) = maze.tm(states(i), action);
+        
+        if(states(i + 1) == 100)
+            termination = true;
+        end
+        cordinates(i, 1) = maze.stateX(states(i));
+        cordinates(i, 2) = maze.stateY(states(i));
+        i = i + 1;
+     end
+     cordinates(i, 1) = maze.stateX(states(i));
+     cordinates(i, 2) = maze.stateY(states(i));
+end

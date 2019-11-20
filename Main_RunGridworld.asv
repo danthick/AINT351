@@ -24,8 +24,6 @@ limits = [0 1; 0 1;];
 % build the maze
 maze = CMazeMaze10x10(limits);
 
-% draw the maze
-maze.DrawMaze();
 
 % init the q-table
 minVal = 0.01;
@@ -60,44 +58,58 @@ resultingState = maze.tm(state, action);
 
 % Plotting histogram
 for i = 1:1000
-    starting(i) = maze.RandomStatingState();
+    starting(i) = maze.RandomStartingState();
 end
 figure
 hold on
 histogram(starting, 100);
 
-episodes = 100;
-trials = 500;
+episodes = 1000;
+trials = 100;
 
-steps = Trial(episodes);
+[maze, steps] = Trial(maze, episodes);
+[meanVal, stdVal, coordinates] = Experiment(maze, episodes, trials);
 
-function [meanVal, stdVal] = Experiment(epsiodes, trials)
+% draw the maze
+maze.DrawMaze();
+line(coordinates(:,1)./10 - 0.05, coordinates(:,2)./10 - 0.05, 'Marker', 'x', 'MarkerFaceColor', 'm', 'MarkerSize', );
+
+% figure
+% hold on
+% plot(steps);
+
+% figure
+% hold on
+% errorbar(meanVal, stdVal);
+
+function [meanVal, stdVal, coordinates] = Experiment(maze, episodes, trials)
     for i = 1:trials
-        stepsAcrossTrials(i, :) = Trial(episodes);
+        [maze, stepsAcrossTrials(i, :)] = Trial(maze, episodes);
     end
     meanVal = mean(stepsAcrossTrials);
     stdVal = std(stepsAcrossTrials);
+    coordinates = GetCoordinates(maze);
 end
 
-function steps = Trial(maze, episodes)
+function [maze, steps] = Trial(maze, episodes)
     terminationState = 100;
     
     for i = 1:episodes
-        [maze.QValues, steps(i)] = Episode(maze.QValues, terminationState);
+        [maze, steps(i)] = Episode(maze, terminationState);
     end
 end
 
-function [Q, steps] = Episode(maze, terminationState)
+function [maze, steps] = Episode(maze, terminationState)
     running = 1;
     steps = 0;
-    state = maze.RandomStatingState();
+    state = maze.RandomStartingState();
     
     while (running == 1)
         action = GreedyActionSelection(maze, state);
         nextState = maze.tm(state, action);
         reward = maze.RewardFunction(state, action);
         
-        maze.QValues = UpdateQ(maze, state, action, nextState, reward);
+        maze = UpdateQ(maze, state, action, nextState, reward);
         
         if(nextState == terminationState)
             running = 0;
@@ -108,7 +120,7 @@ function [Q, steps] = Episode(maze, terminationState)
     end
 end
 
-function Q = UpdateQ(maze, state, action, resultingState, reward)
+function maze = UpdateQ(maze, state, action, resultingState, reward)
     a = 0.2;
     y = 0.9;
     
@@ -129,6 +141,30 @@ function action = GreedyActionSelection(maze, state)
         % the QValues.
         [temp, action] = max(maze.QValues(state, :));
     end
+end
+
+function cordinates = GetCoordinates(maze)
+     termination = false;
+     i = 1;
+     states(i) = 1;
+     
+     while (termination == false)
+         
+         % Calculate action from QValues depending what state
+        [temp, action] = max(maze.QValues(states(i), :));
+        % Update the state given the action
+        states(i + 1) = maze.tm(states(i), action);
+        
+                
+        if(states(i + 1) == 100)
+            termination = true;
+        end
+        cordinates(i, 1) = maze.stateX(states(i));
+        cordinates(i, 2) = maze.stateY(states(i));
+        i = i + 1;
+     end
+     cordinates(i, 1) = maze.stateX(states(i));
+     cordinates(i, 2) = maze.stateY(states(i));
 end
 
 
