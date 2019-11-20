@@ -272,7 +272,7 @@ classdef CMazeMaze10x10
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % function  computes a random starting state between 0 and 100
-        function startingState = RandomStatingState(f)
+        function startingState = RandomStartingState(f)
             % Initial values
             allowed = false;
             b = 100;         
@@ -314,7 +314,7 @@ classdef CMazeMaze10x10
             % allocate
             f.QValues = zeros(f.xStateCnt * f.yStateCnt, f.actionCnt);
             
-            % YOUR CODE GOES HERE ....
+            f.QValues = (maxVal-minVal).*rand(f.totalStateCnt, f.actionCnt) + minVal;
         end
         
         
@@ -357,7 +357,7 @@ classdef CMazeMaze10x10
                                     f.tm(sidx, k) = f.stateNumber(i,j);
                                 end
                             elseif(k == south)
-                                if (i > 0 && i <= 10 && j > 1 && j <= 9)
+                                if (i > 0 && i <= 10 && j > 1 && j <= 10)
                                     if (f.stateOpen(i, j - 1))
                                         f.tm(sidx, k) = f.stateNumber(i,j - 1);
                                     else
@@ -367,7 +367,7 @@ classdef CMazeMaze10x10
                                     f.tm(sidx, k) = f.stateNumber(i,j);
                                 end
                             elseif(k == west)
-                                if (i > 0 && i <= 9 && j > 0 && j <= 9)
+                                if (i > 0 && i <= 9 && j > 0 && j <= 10)
                                     if (f.stateOpen(i + 1, j))
                                         f.tm(sidx, k) = f.stateNumber(i + 1, j);
                                     else

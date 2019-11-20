@@ -27,11 +27,9 @@ maze = CMazeMaze10x10(limits);
 % draw the maze
 maze.DrawMaze();
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% YOU NEED TO DEFINE THESE VALUES
 % init the q-table
-minVal = 0.0;
-maxVal = 0.0;
+minVal = 0.01;
+maxVal = 0.1;
 maze = maze.InitQTable(minVal, maxVal);
 
 % test values
@@ -48,23 +46,17 @@ q = maze.QValues(state, action);
 % get the reward from the action on the surrent state
 % this will be used by Q-learning as follows:
 reward = maze.RewardFunction(state, action);
-
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOU NEED TO FINISH OFF THIS FUNCTION
 % build the transition matrix
 maze = maze.BuildTransitionMatrix();
-% print out values
-maze.tm
 
-% get the next state due to that action
-% this will be used by Q-learning as follows:
+% get the next state due to that action this will be used by Q-learning as follows:
 resultingState = maze.tm(state, action);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOU NEED TO FINISH OFF THIS FUNCTION
-% test random start
-startingState = maze.RandomStatingState();
 
 % Plotting histogram
 for i = 1:1000
@@ -73,4 +65,71 @@ end
 figure
 hold on
 histogram(starting, 100);
-startingState
+
+episodes = 100;
+trials = 500;
+
+steps = Trial(episodes);
+
+function [meanVal, stdVal] = Experiment(epsiodes, trials)
+    for i = 1:trials
+        stepsAcrossTrials(i, :) = Trial(episodes);
+    end
+    meanVal = mean(stepsAcrossTrials);
+    stdVal = std(stepsAcrossTrials);
+end
+
+function steps = Trial(maze, episodes)
+    terminationState = 100;
+    
+    for i = 1:episodes
+        [maze.QValues, steps(i)] = Episode(maze.QValues, terminationState);
+    end
+end
+
+function [Q, steps] = Episode(maze, terminationState)
+    running = 1;
+    steps = 0;
+    state = maze.RandomStatingState();
+    
+    while (running == 1)
+        action = GreedyActionSelection(maze, state);
+        nextState = maze.tm(state, action);
+        reward = maze.RewardFunction(state, action);
+        
+        maze.QValues = UpdateQ(maze, state, action, nextState, reward);
+        
+        if(nextState == terminationState)
+            running = 0;
+        end
+        
+        steps = steps + 1;
+        state = nextState; 
+    end
+end
+
+function Q = UpdateQ(maze, state, action, resultingState, reward)
+    a = 0.2;
+    y = 0.9;
+    
+    maze.QValues(state, action) = maze.QValues(state, action) + a * (reward + y * max(maze.QValues(resultingState, :)) - maze.QValues(state, action));
+end
+
+function action = GreedyActionSelection(maze, state)
+    % Calculating random probability
+    p = rand(1);
+    
+    if (p > 0.9)
+        % Return random action if greater than 0.9 (10%)
+        a = 0;
+        b = 4;
+        action = ceil((b-a) * rand + a);
+    else
+        % Return the index of the maximum value of the current state from
+        % the QValues.
+        [temp, action] = max(maze.QValues(state, :));
+    end
+end
+
+
+
