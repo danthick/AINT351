@@ -134,7 +134,7 @@ function action = GreedyActionSelection(maze, state)
 end
 
 % Returns the coordinates of the most optimal route through the maze
-function coordinates = GetCoordinates(maze)
+function cordinates = GetCoordinates(maze)
      % Setting intial values        
      termination = false;
      i = 1;
@@ -150,12 +150,11 @@ function coordinates = GetCoordinates(maze)
         if(states(i + 1) == 100)
             termination = true;
         end
-        % Get the coordinates of the current state
-        coordinates(i, 1) = maze.stateX(states(i));
-        coordinates(i, 2) = maze.stateY(states(i));
+        % Get the 
+        cordinates(i, 1) = maze.stateX(states(i));
+        cordinates(i, 2) = maze.stateY(states(i));
         i = i + 1;
      end
-     % Get final cordinates
-     coordinates(i, 1) = maze.stateX(states(i));
-     coordinates(i, 2) = maze.stateY(states(i));
+     cordinates(i, 1) = maze.stateX(states(i));
+     cordinates(i, 2) = maze.stateY(states(i));
 end
