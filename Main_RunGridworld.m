@@ -16,6 +16,70 @@ close all
 clear all
 clc
 
+            % Defining variables
+            armLength = [0.4;0.4];
+            baseOrigin = [0, 0];
+            samples = 1000;
+            noOfInputs = 3;
+            noOfHiddenNodes = 7;
+            noOfOutputNodes = 2;
+
+            % Generating 2 x samples data between 0 - pi
+            angles = pi * rand(2,samples);
+            % Calculating arm end points given angles
+            [P1, P2] = RevoluteForwardKinematics2D(armLength, angles, baseOrigin);
+
+            X = Data;
+            X.values = P2;
+            X = normalize(X);
+
+            
+            Network.W1 = rand(noOfHiddenNodes, noOfInputs);
+            Network.W2 = rand(noOfOutputNodes, noOfHiddenNodes + 1);
+
+%             for i = 1:1000
+%                 for j = 1:samples
+%                     Network.train(X.values(:,j), angles(:,j));
+%                 end 
+%             end
+
+            out = Data;
+            out.values = rand(2,samples);
+            out.values = X.values;
+            out = normalize(out);
+            Xrand  = out.values;
+            for i = 1:samples
+                o = Network.feedForward(Xrand(:,i));
+                out.values(1,i) = o(1,1);
+                out.values(2,i) = o(2,1);
+            end
+            out = Network.reverseNormalize(out);
+            X = Network.reverseNormalize(X);
+
+            out.values(:,1)
+            X.values(:,1)
+
+            [P3, P4] = RevoluteForwardKinematics2D(armLength, out.values, baseOrigin);
+
+            figure
+            hold on
+            tiledlayout(2,2)
+            nexttile
+            plot(X.values(1,:), X.values(2,:), 'b.');
+            nexttile
+            plot(angles(1,:), angles(2,:), 'b.');
+            nexttile
+            plot(out.values(1,:), out.values(2,:), 'r.');
+            nexttile
+            plot(P4(1,:), P4(2,:), 'r.', 'markersize',4);
+
+
+
+
+
+Network.start();
+output = feedForward([1 1]);
+
 % Limit values of maze
 limits = [0 1; 0 1;];
 
@@ -153,6 +217,7 @@ function coordinates = GetCoordinates(maze)
         % Get the coordinates of the current state
         coordinates(i, 1) = maze.stateX(states(i));
         coordinates(i, 2) = maze.stateY(states(i));
+        % Incrementing i
         i = i + 1;
      end
      % Get final cordinates
