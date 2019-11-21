@@ -43,8 +43,7 @@ episodes = 1000;
 trials = 100;
 
 % Storing returned values
-[maze, steps] = Trial(maze, episodes);
-[meanVal, stdVal, coordinates] = Experiment(maze, episodes, trials);
+[meanVal, stdVal, steps, coordinates] = Experiment(maze, episodes, trials);
 
 % Drawing the maze and plotting the route to termination state
 maze.DrawMaze();
@@ -56,12 +55,12 @@ line(coordinates(:,1)./10 - 0.05, coordinates(:,2)./10 - 0.05, 'Marker', 'x', 'M
 % plot(steps);
 
 % Plotting the mean and standard deviation on an error bar
-% figure
-% hold on
-% errorbar(meanVal, stdVal);
+figure
+hold on
+errorbar(meanVal, stdVal);
 
 % Calculates mean and std and runs the number of trials
-function [meanVal, stdVal, coordinates] = Experiment(maze, episodes, trials)
+function [meanVal, stdVal, stepsAcrossTrials, coordinates] = Experiment(maze, episodes, trials)
     % Loops through number of trials
     for i = 1:trials
         [maze, stepsAcrossTrials(i, :)] = Trial(maze, episodes);

@@ -51,20 +51,20 @@ maze.DrawMaze();
 line(coordinates(:,1)./10 - 0.05, coordinates(:,2)./10 - 0.05, 'Marker', 'x', 'MarkerEdgeColor', 'm','MarkerFaceColor', [1, 0, 1], 'MarkerSize', 20, 'LineWidth', 5);
 
 % Plotting the number of steps against the trial
-% figure
-% hold on
-% plot(steps);
+figure
+hold on
+plot(steps);
 
 % Plotting the mean and standard deviation on an error bar
-% figure
-% hold on
-% errorbar(meanVal, stdVal);
+figure
+hold on
+errorbar(meanVal, stdVal);
 
 % Calculates mean and std and runs the number of trials
 function [meanVal, stdVal, coordinates] = Experiment(maze, episodes, trials)
     % Loops through number of trials
     for i = 1:trials
-        [maze, stepsAcrossTrials(i, :)] = Trial(maze, episodes);
+        [maze, stepsAcrossTrials(:, :)] = Trial(maze, episodes);
     end
     meanVal = mean(stepsAcrossTrials);
     stdVal = std(stepsAcrossTrials);
@@ -134,7 +134,7 @@ function action = GreedyActionSelection(maze, state)
 end
 
 % Returns the coordinates of the most optimal route through the maze
-function cordinates = GetCoordinates(maze)
+function coordinates = GetCoordinates(maze)
      % Setting intial values        
      termination = false;
      i = 1;
@@ -150,11 +150,12 @@ function cordinates = GetCoordinates(maze)
         if(states(i + 1) == 100)
             termination = true;
         end
-        % Get the 
-        cordinates(i, 1) = maze.stateX(states(i));
-        cordinates(i, 2) = maze.stateY(states(i));
+        % Get the coordinates of the current state
+        coordinates(i, 1) = maze.stateX(states(i));
+        coordinates(i, 2) = maze.stateY(states(i));
         i = i + 1;
      end
-     cordinates(i, 1) = maze.stateX(states(i));
-     cordinates(i, 2) = maze.stateY(states(i));
+     % Get final cordinates
+     coordinates(i, 1) = maze.stateX(states(i));
+     coordinates(i, 2) = maze.stateY(states(i));
 end
