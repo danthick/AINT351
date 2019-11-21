@@ -20,7 +20,7 @@ function [W1, W2] = Network()
     X = Data;
     X.values = P2;
     X = normalize(X);
-    %angles = normalize(angles);
+    angles = normalize(angles);
     
     % Initialising random weights, plus 1 used for the bias
     W1 = rand(noOfHiddenNodes, noOfInputs + 1);
@@ -45,7 +45,7 @@ function [W1, W2] = Network()
     
     out = reverseNormalize(out);
     X = reverseNormalize(X);
-    %angles = reverseNormalize(angles);
+    angles = reverseNormalize(angles);
     
     [P3, P4] = RevoluteForwardKinematics2D(armLength, out.values, baseOrigin);
     

@@ -17,7 +17,7 @@ clear all
 clc
 
 % Limit values of maze
-limits = [0 1; 0 1;];
+limits = [-0.7 -0.1; -0.2 0.4;];
 
 % Build the maze
 maze = CMazeMaze10x10(limits);
@@ -42,12 +42,42 @@ histogram(starting, 100);
 episodes = 1000;
 trials = 100;
 
+coordinates = Data;
+
 % Storing returned values
-[meanVal, stdVal, steps, coordinates] = Experiment(maze, episodes, trials);
+[meanVal, stdVal, steps, coordinates.values] = Experiment(maze, episodes, trials);
+for i = 1:19
+    coordinates.values(1,i) = coordinates.values(1,i)./10 - 0.05;
+    coordinates.values(2,i) = coordinates.values(2,i)./10 - 0.05;
+end
+
+
+coordinates = Normalize(coordinates);
+output = coordinates;
+[W1, W2] = Network();
+
+for i = 1:19
+    output.values(:,i) = FeedForward([coordinates.values(1,i);coordinates.values(2,i)],W1, W2);
+end
+
+output = ReverseNormalize(output);
+
+armLength = [0.4;0.4];
+baseOrigin = [0, 0];
+[P1, P2] = RevoluteForwardKinematics2D(armLength, output.values, baseOrigin);
+
+
+
 
 % Drawing the maze and plotting the route to termination state
 maze.DrawMaze();
-line(coordinates(:,1)./10 - 0.05, coordinates(:,2)./10 - 0.05, 'Marker', 'x', 'MarkerEdgeColor', 'm','MarkerFaceColor', [1, 0, 1], 'MarkerSize', 20, 'LineWidth', 5);
+line(coordinates.values(1,:), coordinates.values(2,:), 'Marker', 'x', 'MarkerEdgeColor', 'm','MarkerFaceColor', [1, 0, 1], 'MarkerSize', 20, 'LineWidth', 5);
+for i = 1:19
+  % Plotting points with arm, connecting to origin
+  hold on
+  plot([P1(1,i) P2(1,i)],[P1(2,i) P2(2,i)], 'b-o', 'MarkerSize', 5);
+  plot([P1(1,i) baseOrigin(1)], [P1(2,i) baseOrigin(2)], 'r-o', 'MarkerSize', 5);
+end
 
 % Plotting the number of steps against the trial
 % figure
@@ -150,11 +180,11 @@ function coordinates = GetCoordinates(maze)
             termination = true;
         end
         % Get the coordinates of the current state
-        coordinates(i, 1) = maze.stateX(states(i));
-        coordinates(i, 2) = maze.stateY(states(i));
+        coordinates(1, i) = maze.stateX(states(i));
+        coordinates(2, i) = maze.stateY(states(i));
         i = i + 1;
      end
      % Get final cordinates
-     coordinates(i, 1) = maze.stateX(states(i));
-     coordinates(i, 2) = maze.stateY(states(i));
+     coordinates(1, i) = maze.stateX(states(i));
+     coordinates(2, i) = maze.stateY(states(i));
 end

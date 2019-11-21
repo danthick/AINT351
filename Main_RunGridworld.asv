@@ -42,18 +42,42 @@ histogram(starting, 100);
 episodes = 1000;
 trials = 100;
 
+
+coordinates = Data;
+
 % Storing returned values
-[maze, steps] = Trial(maze, episodes);
-[meanVal, stdVal, coordinates] = Experiment(maze, episodes, trials);
+[meanVal, stdVal, steps, coordinates.values] = Experiment(maze, episodes, trials);
+coordinates = Normalize(coordinates);
+[W1, W2] = Network();
+
+
+output = Data;
+for i = 1:19
+    output.values(:,i) = FeedForward([coordinatesvalues(i,1);coordinates(i,2)],W1, W2);
+end
+
+output = ReverseNormalize(output);
+
+armLength = [0.4;0.4];
+baseOrigin = [0, 0];
+[P1, P2] = RevoluteForwardKinematics2D(armLength, output, baseOrigin);
+
+figure
+for i = 1:19
+  % Plotting points with arm, connecting to origin
+  hold on
+  plot([P1(1,i) P2(1,i)],[P1(2,i) P2(2,i)], 'b-o', 'MarkerSize', 5);
+  plot([P1(1,i) baseOrigin(1)], [P1(2,i) baseOrigin(2)], 'r-o', 'MarkerSize', 5);
+end
 
 % Drawing the maze and plotting the route to termination state
 maze.DrawMaze();
 line(coordinates(:,1)./10 - 0.05, coordinates(:,2)./10 - 0.05, 'Marker', 'x', 'MarkerEdgeColor', 'm','MarkerFaceColor', [1, 0, 1], 'MarkerSize', 20, 'LineWidth', 5);
 
 % Plotting the number of steps against the trial
-figure
-hold on
-plot(steps);
+% figure
+% hold on
+% plot(steps);
 
 % Plotting the mean and standard deviation on an error bar
 figure
@@ -61,10 +85,10 @@ hold on
 errorbar(meanVal, stdVal);
 
 % Calculates mean and std and runs the number of trials
-function [meanVal, stdVal, coordinates] = Experiment(maze, episodes, trials)
+function [meanVal, stdVal, stepsAcrossTrials, coordinates] = Experiment(maze, episodes, trials)
     % Loops through number of trials
     for i = 1:trials
-        [maze, stepsAcrossTrials(:, :)] = Trial(maze, episodes);
+        [maze, stepsAcrossTrials(i, :)] = Trial(maze, episodes);
     end
     meanVal = mean(stepsAcrossTrials);
     stdVal = std(stepsAcrossTrials);
