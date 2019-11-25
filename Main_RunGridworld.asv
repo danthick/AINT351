@@ -67,6 +67,9 @@ armLength = [0.4;0.4];
 baseOrigin = [0, 0];
 [P1, P2] = RevoluteForwardKinematics2D(armLength, output.values, baseOrigin);
 
+
+
+
 % Drawing the maze and plotting the route to termination state
 maze.DrawMaze();
 line(scaledCoordinates(1,:), scaledCoordinates(2,:), 'Marker', 'x', 'MarkerEdgeColor', 'm','MarkerFaceColor', [1, 0, 1], 'MarkerSize', 20, 'LineWidth', 5);

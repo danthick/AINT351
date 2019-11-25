@@ -10,7 +10,12 @@ function [W1, W2] = Train(input, target, W1, W2)
     o = W2*a2hat;
 
     delta3 = -(target-o);
-    W2Hat = [W2(1,1), W2(1,2), W2(1,3), W2(1,4), W2(1,5), W2(1,6), W2(1,7), W2(1,8); W2(2,1), W2(2,2), W2(2,3), W2(2,4), W2(2,5), W2(2,6), W2(2,7), W2(2,8)];
+    
+    for i = 1:size(W2,2)-1
+        W2Hat(1,i) = W2(1,i);
+        W2Hat(2,i) = W2(2,i);
+    end
+    
     delta2 = (W2Hat'*delta3).*a2.*(1-a2);
 
     errGradientW1 = delta2*input';
@@ -18,5 +23,4 @@ function [W1, W2] = Train(input, target, W1, W2)
 
     W1 = W1 - 0.01*errGradientW1;
     W2 = W2 - 0.01*errGradientW2;
-    
 end
