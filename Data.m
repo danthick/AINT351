@@ -11,8 +11,7 @@ classdef Data
     methods        
         function M = normalize(obj)                
             for k = 1:size(obj.values)
-                obj.values(k,:) = (obj.values(k,:) - mean(obj.values(k,:)))/std(obj.values(k,:));
-                %obj.values(k,:) = obj.values(k,:)./std(obj.values(k,:));
+                obj.values(k,:) = (obj.values(k,:) - obj.meanVal(k))/obj.stdVal(k);
             end
             M = obj;
         end
@@ -20,7 +19,6 @@ classdef Data
         function M = reverseNormalize(obj)
             for k = 1:size(obj.values)
                 obj.values(k,:) = (obj.stdVal(k) .* obj.values(k,:)) + obj.meanVal(k);
-                %obj.values(k,:) = obj.values(k,:) + obj.meanVal(k);
             end
             M = obj;
         end

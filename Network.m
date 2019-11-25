@@ -19,7 +19,7 @@ function [W1, W2] = Network()
     % Setting up input values and normalizing the data
     X = Data;
     X.values = P2;
-    X = normalize(X);
+    %X = normalize(X);
     %angles = normalize(angles);
     
     % Initialising random weights, plus 1 used for the bias
@@ -36,15 +36,15 @@ function [W1, W2] = Network()
     out = Data;
     out.values = pi * rand(2,samples);
     [P1, out.values] = RevoluteForwardKinematics2D(armLength, out.values, baseOrigin);
-    out = normalize(out);
+    %out = normalize(out);
     for i = 1:samples
         o = FeedForward(out.values(:,i), W1, W2);
         out.values(1,i) = o(1,1);
         out.values(2,i) = o(2,1);
     end
     
-    out = reverseNormalize(out);
-    X = reverseNormalize(X);
+    %out = reverseNormalize(out);
+    %X = reverseNormalize(X);
     %angles = reverseNormalize(angles);
     
     [P3, P4] = RevoluteForwardKinematics2D(armLength, out.values, baseOrigin);

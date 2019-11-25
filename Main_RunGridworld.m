@@ -46,13 +46,23 @@ coordinates = Data;
 
 % Storing returned values
 [meanVal, stdVal, steps, coordinates.values] = Experiment(maze, episodes, trials);
+
+scaleX =  (limits(1,2) - limits(1,1)) / maze.xStateCnt;
+scaleY = (limits(2,2) - limits(2,1)) / maze.yStateCnt;
+
+                    
+
 for i = 1:19
-    coordinates.values(1,i) = coordinates.values(1,i)./10 - 0.05;
-    coordinates.values(2,i) = coordinates.values(2,i)./10 - 0.05;
+    
+    coordinates.values(1,i) = coordinates.values(1,i) * scaleX + limits(1,1) + maze.cursorSizeX/2;
+    coordinates.values(2,i) = coordinates.values(2,i) * scaleY + limits(2,1) + maze.cursorSizeY/2;
+    
+    %coordinates.values(1,i) = coordinates.values(1,i)./10 - 0.05;
+    %coordinates.values(2,i) = coordinates.values(2,i)./10 - 0.05;
 end
 
 
-coordinates = Normalize(coordinates);
+%coordinates = Normalize(coordinates);
 output = coordinates;
 [W1, W2] = Network();
 
@@ -60,7 +70,7 @@ for i = 1:19
     output.values(:,i) = FeedForward([coordinates.values(1,i);coordinates.values(2,i)],W1, W2);
 end
 
-output = ReverseNormalize(output);
+%output = ReverseNormalize(output);
 
 armLength = [0.4;0.4];
 baseOrigin = [0, 0];
