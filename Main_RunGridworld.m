@@ -69,11 +69,14 @@ baseOrigin = [0, 0];
 
 % Drawing the maze and plotting the route to termination state
 maze.DrawMaze();
+xlim([-1 0.5]);
+ylim([-0.3 0.7]);
 line(scaledCoordinates(1,:), scaledCoordinates(2,:), 'Marker', 'x', 'MarkerEdgeColor', 'm','MarkerFaceColor', [1, 0, 1], 'MarkerSize', 20, 'LineWidth', 5);
 for i = 1:19
   % Plotting points with arm, connecting to origin
-  hold on
-  plot([P1(1,i) P2(1,i)],[P1(2,i) P2(2,i)], 'r-o', 'MarkerSize', 5);
+  pause(2);
+  refreshdata();
+  plot([P1(1,i) P2(1,i)],[P1(2,i) P2(2,i)], 'r-o', 'MarkerSize', 5, 'MarkerFaceColor', 'green');
   plot([P1(1,i) baseOrigin(1)], [P1(2,i) baseOrigin(2)], 'r-o', 'MarkerSize', 5);
 end
 

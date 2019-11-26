@@ -13,9 +13,7 @@ function DisplayRevoluteArm()
     % Plot data
     figure
     hold on
-    title({'ID: 10555972', 'Arm Endpoint'});
-    xlabel('x[m]');
-    ylabel('y[m]'); 
+    h=title(sprintf('YOURIDHERE: Maze wth %d x-axis X %d y-axis cells', f.xStateCnt, f.yStateCnt));
     plot(P2(1,:), P2(2,:), 'r.')
     plot(baseOrigin(1), baseOrigin(2), 'b.', 'MarkerSize', 20);
 
