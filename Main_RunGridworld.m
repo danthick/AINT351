@@ -74,8 +74,7 @@ ylim([-0.3 0.7]);
 line(scaledCoordinates(1,:), scaledCoordinates(2,:), 'Marker', 'x', 'MarkerEdgeColor', 'm','MarkerFaceColor', [1, 0, 1], 'MarkerSize', 20, 'LineWidth', 5);
 for i = 1:19
   % Plotting points with arm, connecting to origin
-  pause(2);
-  refreshdata();
+  %pause(0.5);
   plot([P1(1,i) P2(1,i)],[P1(2,i) P2(2,i)], 'r-o', 'MarkerSize', 5, 'MarkerFaceColor', 'green');
   plot([P1(1,i) baseOrigin(1)], [P1(2,i) baseOrigin(2)], 'r-o', 'MarkerSize', 5);
 end
