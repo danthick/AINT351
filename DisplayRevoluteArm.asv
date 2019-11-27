@@ -10,21 +10,28 @@ function DisplayRevoluteArm()
     % Generating 2xsamples data between 0 - pi
     data = pi * rand(2,samples);
     [P1, P2] = RevoluteForwardKinematics2D(armLength, data, baseOrigin);
+    
     % Plot data
     figure
     hold on
-    h=title(sprintf('YOURIDHERE: Maze wth %d x-axis X %d y-axis cells', f.xStateCnt, f.yStateCnt));
+    title({'ID: 10555972', 'Arm Joint Angles'});
+    xlabel('x-axis');
+    ylabel('y-axis'); 
+    plot(data(1,:), data(2,:), 'r.');
+    
+    figure
+    hold on
+    title({'ID: 10555972', 'Arm Endpoint'});
+    xlabel('x[m]');
+    ylabel('y[m]'); 
     plot(P2(1,:), P2(2,:), 'r.')
     plot(baseOrigin(1), baseOrigin(2), 'b.', 'MarkerSize', 20);
-
-    
-    % Generating just 10 samples
-    samples = 10;
-    data = pi * rand(2,samples);
-    [P1, P2] = RevoluteForwardKinematics2D(armLength, data, baseOrigin);
         
     figure
-    for i = 1:samples
+    title({'ID: 10555972', 'Arm Configuration'});
+    xlabel('x[m]');
+    ylabel('y[m]'); 
+    for i = 1:10
       % Plotting points with arm, connecting to origin
       hold on
       plot([P1(1,i) P2(1,i)],[P1(2,i) P2(2,i)], 'b-o', 'MarkerSize', 5,  'MarkerFaceColor', 'green');
