@@ -28,9 +28,9 @@ function [W1, W2] = Network()
     disp("Training network");
     for i = 1:iterations
         for j = 1:samples
-            [W1, W2, err(j)] = Train(X.values(:,j), angles.values(:,j), W1, W2);
+            [W1, W2, err] = Train(X.values(:,j), angles.values(:,j), W1, W2);
         end
-        error(i) = mean(err);
+        error(i) = err;
     end
     figure
     hold on

@@ -1,6 +1,6 @@
 % Function to train the network given input data, target data and the weight
 % matrix. By calculating the error gradient and updating the weight values.
-function [W1, W2] = Train(input, target, W1, W2)
+function [W1, W2, err] = Train(input, target, W1, W2)
     % Setting learning rate    
     learningRate = 0.01;
     
@@ -25,13 +25,17 @@ function [W1, W2] = Train(input, target, W1, W2)
         W2Hat(2,i) = W2(2,i);
     end
     
-    % Delta 2 is equal to the error from the first layer multiplied by a
+    % Delta 2 is equal to the error from the second layer multiplied by a
     % scaling factor due to the sigmoid function
     delta2 = (W2Hat'*delta3).*a2.*(1-a2);
 
     % Calculating the error gradient
     errGradientW1 = delta2*input';
     errGradientW2 = delta3*a2hat';
+    
+    
+    err = mean((target - o).^2);
+    
     
     % Updating weights using the learning rate and error gradient
     W1 = W1 - learningRate*errGradientW1;
