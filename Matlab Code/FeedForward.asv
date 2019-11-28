@@ -1,5 +1,4 @@
-% This function is used to carry out a feedforward pass of the network
-% given its input data and both weight matrices.
+% This function is used to carry out a f
 function output = FeedForward(input, W1, W2)
     % Add bias to input matrix
     input = [input; 1];

@@ -16,17 +16,14 @@ function [W1, W2] = Train(input, target, W1, W2)
     o = W2*a2hat;
     
     % BACKPROPAGATION
-    % Delta 3 is equal to the output error
+    % 
     delta3 = -(target-o);
     
-    % Removing bias from weights
     for i = 1:size(W2,2)-1
         W2Hat(1,i) = W2(1,i);
         W2Hat(2,i) = W2(2,i);
     end
     
-    % Delta 2 is equal to the error from the first layer multiplied by a
-    % scaling factor due to the sigmoid function
     delta2 = (W2Hat'*delta3).*a2.*(1-a2);
 
     % Calculating the error gradient
