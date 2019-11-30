@@ -33,9 +33,8 @@ function [W1, W2, err] = Train(input, target, W1, W2)
     errGradientW1 = delta2*input';
     errGradientW2 = delta3*a2hat';
     
-    
+    % Calculate error (squared to account for negatives)
     err = mean((target - o).^2);
-    
     
     % Updating weights using the learning rate and error gradient
     W1 = W1 - learningRate*errGradientW1;

@@ -40,25 +40,26 @@ histogram(starting, 100);
 
 % Defining the number of episodes and trials
 episodes = 1000;
-trials = 100;
+trials = 1;
 
 % Storing returned values
 [meanVal, stdVal, steps, coordinates] = Experiment(maze, episodes, trials);                  
 
 for i = 1:19  
     scaledCoordinates(1,i) = maze.textLowerPoint(coordinates(1,i),coordinates(2,i),1);
-    scaledCoordinates(2,i) = maze.textLowerPoint(coordinates(1,i),coordinates(2,i),2);
+    scaledCoordinates(2,i) = maze.textLowerPoint(coordinates(1,i),coordinates.values(2,i),2);
 end
 
+output = coordinates;
 [W1, W2] = Network();
 
 for i = 1:19
-    output(:,i) = FeedForward([scaledCoordinates(1,i);scaledCoordinates(2,i)],W1, W2);
+    output.values(:,i) = FeedForward([scaledCoordinates(1,i);scaledCoordinates(2,i)],W1, W2);
 end
 
 armLength = [0.4;0.4];
 baseOrigin = [0, 0];
-[P1, P2] = RevoluteForwardKinematics2D(armLength, output, baseOrigin);
+[P1, P2] = RevoluteForwardKinematics2D(armLength, output.values, baseOrigin);
 
 % Drawing the maze and plotting the route to termination state
 maze.DrawMaze();
