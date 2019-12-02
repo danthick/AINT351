@@ -36,52 +36,57 @@ for i = 1:1000
 end
 figure
 hold on
+title({'ID: 10555972', 'Histogram of Starting States'});
+xlabel('Square on Maze');
+ylabel('Number of Occurrences'); 
 histogram(starting, 100);
 
 % Defining the number of episodes and trials
-episodes = 1000;
-trials = 1;
+episodes = 500;
+trials = 100;
 
 % Storing returned values
 [meanVal, stdVal, steps, coordinates] = Experiment(maze, episodes, trials);                  
 
 for i = 1:19  
     scaledCoordinates(1,i) = maze.textLowerPoint(coordinates(1,i),coordinates(2,i),1);
-    scaledCoordinates(2,i) = maze.textLowerPoint(coordinates(1,i),coordinates.values(2,i),2);
+    scaledCoordinates(2,i) = maze.textLowerPoint(coordinates(1,i),coordinates(2,i),2);
 end
 
-output = coordinates;
+% Training network
 [W1, W2] = Network();
 
+% Passing scaled coordinated through network to get arm angles
 for i = 1:19
-    output.values(:,i) = FeedForward([scaledCoordinates(1,i);scaledCoordinates(2,i)],W1, W2);
+    outputtedAngles(:,i) = FeedForward([scaledCoordinates(1,i);scaledCoordinates(2,i)],W1, W2);
 end
 
-armLength = [0.4;0.4];
-baseOrigin = [0, 0];
-[P1, P2] = RevoluteForwardKinematics2D(armLength, output.values, baseOrigin);
+% Defining variables and passing outputted arm angl
+armLength = [0.4;0.4]; baseOrigin = [0, 0];
+[P1, P2] = RevoluteForwardKinematics2D(armLength, outputtedAngles, baseOrigin);
 
 % Drawing the maze and plotting the route to termination state
 maze.DrawMaze();
-xlim([-1 0.5]);
-ylim([-0.3 0.7]);
+title({'ID: 10555972', '10x10 Maze'});
+xlim([-0.8 0.4]);
+ylim([-0.3 0.6]);
 line(scaledCoordinates(1,:), scaledCoordinates(2,:), 'Marker', 'x', 'MarkerEdgeColor', 'm','MarkerFaceColor', [1, 0, 1], 'MarkerSize', 20, 'LineWidth', 5);
 for i = 1:19
   % Plotting points with arm, connecting to origin
-  %pause(0.5);
-  plot([P1(1,i) P2(1,i)],[P1(2,i) P2(2,i)], 'r-o', 'MarkerSize', 5, 'MarkerFaceColor', 'green');
-  plot([P1(1,i) baseOrigin(1)], [P1(2,i) baseOrigin(2)], 'r-o', 'MarkerSize', 5);
+  a1 = plot([P1(1,i) P2(1,i)],[P1(2,i) P2(2,i)], 'r-o', 'MarkerSize', 5, 'MarkerFaceColor', 'green');
+  a2 = plot([P1(1,i) baseOrigin(1)], [P1(2,i) baseOrigin(2)], 'r-o', 'MarkerSize', 5);
 end
 
-% Plotting the number of steps against the trial
+% Plotting the mean and standard deviation on an error bar
 % figure
 % hold on
-% plot(steps);
+% title({'ID: 10555972', 'Q-Learning in Operation Across Multiple Trials'});
+% xlabel('Episode Number');
+% ylabel('Number of Steps'); 
+% errorbar(meanVal, stdVal);
 
-% Plotting the mean and standard deviation on an error bar
-figure
-hold on
-errorbar(meanVal, stdVal);
+
+
 
 % Calculates mean and std and runs the number of trials
 function [meanVal, stdVal, stepsAcrossTrials, coordinates] = Experiment(maze, episodes, trials)

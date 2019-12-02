@@ -2,7 +2,7 @@ function [W1, W2] = Network()
     % Defining variables
     armLength = [0.4;0.4]; baseOrigin = [0, 0];
     samples = 1000; iterations = 1000;
-    noOfInputs = 2; noOfHiddenNodes = 20; noOfOutputNodes = 2;
+    noOfInputs = 2; noOfHiddenNodes = 25; noOfOutputNodes = 2;
     
     % Generating 2 x samples data between 0 and pi
     randAngles = pi * rand(2,samples);

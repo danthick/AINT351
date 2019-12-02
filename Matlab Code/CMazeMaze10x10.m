@@ -260,7 +260,7 @@ classdef CMazeMaze10x10
         
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % reward function that takes a stateID and an action
+        % Reward function that takes a stateID and an action
         function reward = RewardFunction(f, stateID, action)
             if ((stateID == 90 && action == 1) || (stateID == 99 && action == 4))
                 reward = 10;
@@ -271,7 +271,8 @@ classdef CMazeMaze10x10
         
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % function  computes a random starting state between 0 and 100
+        % Function to compute a random starting state between 0 and 100 not
+        % including blocked states
         function startingState = RandomStartingState(f)
             % Initial values
             allowed = false;
@@ -285,7 +286,7 @@ classdef CMazeMaze10x10
                     % Getting tile number
                     sidx=f.stateNumber(f.blockedLocations(i, 1),f.blockedLocations(i, 2));    
                     % Changing bool value depending on if state is allowed or not
-                    if (sidx == startingState)
+                    if (sidx == startingState || startingState == 100)
                         allowed = false;
                         break;
                     else
@@ -300,7 +301,7 @@ classdef CMazeMaze10x10
         function endState = IsEndState(f, x, y)
             
             % default to not found
-            endState=0;
+            endState=100;
             
             % YOUR CODE GOES HERE ....
             
@@ -308,34 +309,28 @@ classdef CMazeMaze10x10
         
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % init the q-table
+        % Intialise the Q-Table
         function f = InitQTable(f, minVal, maxVal)
-            
-            % allocate
-            f.QValues = zeros(f.xStateCnt * f.yStateCnt, f.actionCnt);
-            
             f.QValues = (maxVal-minVal).*rand(f.totalStateCnt, f.actionCnt) + minVal;
         end
         
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % % build the transition matrix
-        % look for boundaries on the grid
-        % also look for blocked state
+        % Function to build the transition matrix
         function f = BuildTransitionMatrix(f)
-            north = 1;
-            east = 2;
-            south = 3;
-            west = 4;
+            % Defining actions
+            north = 1; east = 2; south = 3; west = 4;
             
-            % allocate to zero
-            f.tm = zeros(f.xStateCnt * f.yStateCnt, f.actionCnt);
-            
+            % Loop through each state
             for i = 1:f.xStateCnt
                 for j = 1:f.yStateCnt
+                    % Check if state is open
                     if (f.stateOpen(i, j))
                         sidx=f.stateNumber(i,j);
+                        % Loop through each possible action
                         for k = 1:4
+                            % Increase or decrease coordinates
+                            % depending on action
                             if (k == north)
                                 if (i > 0 && i <= 10 && j > 0 && j <= 9)
                                     if (f.stateOpen(i, j + 1))
