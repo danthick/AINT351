@@ -12,11 +12,11 @@ function [W1, W2] = Network()
     % Initialising random weights, plus 1 used for the bias
     W1 = rand(noOfHiddenNodes, noOfInputs + 1);
     W2 = rand(noOfOutputNodes, noOfHiddenNodes + 1);
-    
+
     % Training the data for the number of iterations for each data point
     for i = 1:iterations
         for j = 1:samples
-            [W1, W2, err(j)] = Train(P2(:,j), randAngles(:,j), W1, W2);
+            [W1, W2, err(j)] = TrainNetwork(P2(:,j), randAngles(:,j), W1, W2);
         end
         % Calculating error
         error(i) = mean(err);
