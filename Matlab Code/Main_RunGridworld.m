@@ -42,7 +42,7 @@ ylabel('Number of Occurrences');
 histogram(starting, 100);
 
 % Defining the number of episodes and trials
-episodes = 500;
+episodes = 1000;
 trials = 100;
 
 % Storing returned values
