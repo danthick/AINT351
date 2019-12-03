@@ -42,7 +42,7 @@ ylabel('Number of Occurrences');
 histogram(starting, 100);
 
 % Defining the number of episodes and trials
-episodes = 1000;
+episodes = 500;
 trials = 100;
 
 % Storing returned values
@@ -79,15 +79,12 @@ for i = 1:19
 end
 
 % Plotting the mean and standard deviation on an error bar
-% figure
-% hold on
-% title({'ID: 10555972', 'Q-Learning in Operation Across Multiple Trials'});
-% xlabel('Episode Number');
-% ylabel('Number of Steps'); 
-% errorbar(meanVal, stdVal);
-
-
-
+figure
+hold on
+title({'ID: 10555972', 'Q-Learning in Operation Across Multiple Trials'});
+xlabel('Episode Number');
+ylabel('Number of Steps'); 
+errorbar(meanVal, stdVal);
 
 % Calculates mean and std and runs the number of trials
 function [meanVal, stdVal, stepsAcrossTrials, coordinates] = Experiment(maze, episodes, trials)
@@ -139,7 +136,7 @@ end
 
 % Using Q-Algorithm to update a value in the QValues using the learning and discount rate
 function maze = UpdateQ(maze, state, action, resultingState, reward)
-    a = 0.2;
+    a = 0.05;
     y = 0.9;
     maze.QValues(state, action) = maze.QValues(state, action) + a * (reward + y * max(maze.QValues(resultingState, :)) - maze.QValues(state, action));
 end
