@@ -1,52 +1,15 @@
-# Project Title
-
-AINT351 - Machine Learning Coursework 2019
-
+# AINT351 - Machine Learning
 ## Description
 
 This coursework consisted of 5 tasks that resulted in a simple kinematic controller that operates a simulated 2-joint revolute arm and trace a path through a maze using a neural network and the Q-Learning algorithm.
 
-## Getting Started
+## Report
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites
-
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
+## Running
+Run source code using [MatLab]().
 
 ## Authors
 
 * **Ian Howard** - *Intial code and template*
 * **Dan Thick** - *Completion of coursework and required tasks*
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
